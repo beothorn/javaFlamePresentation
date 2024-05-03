@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javaflame</title>
+    <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+                border: inherit;
+            }
+
+            html, body {
+                height: 100%;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .grid{
+                height: 100%;
+                display: grid;
+            }
+
+            h1{
+                font-size: 5em;
+            }
+
+            p,ul{
+                font-size: 2em;
+            }
+
+            .centered{
+                justify-self: center;
+                align-self: center;
+            }
+
+            .layout-title{
+                grid-template-columns: 1fr;
+                grid-template-rows: 0.6fr 1.5fr 0.9fr;
+            }
+
+            .header{
+                padding: 5em;
+                justify-self: center;
+                align-self: center;
+            }
+
+            .layout-title-content{
+                grid-template-columns: 1fr;
+                grid-template-rows: 0.4fr 1.6fr;
+            }
+
+            .layout-title-content div.body{
+                padding-left: 5em;
+            }
+    </style>
+</head>
+<body>
+    
+    <div class="slide grid layout-title">
+        <div class="header">
+            <h1>Javaflame</h1>
+        </div>
+        <div class="centered">
+            <p>Better than System.out.println()</p>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>The problem</h1>
+        </div>
+        <div class="body">
+            <ul>
+                <li>Debugging with breakpoints is slow</li>
+                <li>Debugging on console is confusing</li>
+                <li>Debugging more than one call is tedious</li>
+                <li>Specially hard with a timeout involved</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>Javaflame: What does it do?</h1>
+        </div>
+        <div class="body">
+            <ul>
+                <li>Stack capturing</li>
+                <li>Class and function filter</li>
+                <li>Html output</li>
+                <li>Flamegraph</li>
+                <li>Call hierarchy</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>First lets see it in action</h1>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>But how?</h1>
+        </div>
+        <div class="body">
+            <h2>Java Instrumentation API</h2>
+            <p>Introduced with java 1.5</p>
+            <p>Instrumentation is the addition of byte-codes to methods for the purpose of gathering data to be utilized by tools.</p>
+            <p>Using java agents you can redefine or transform bytecode.</p>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>What is a java agent?</h1>
+        </div>
+        <div class="body">
+            <p>A java application that is called as soon as the jvm is loaded.</p>
+            <p>It needs to have a premain.</p>
+            <p>For example...</p>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>Wait a second, is this a profiler?</h1>
+        </div>
+        <div class="body">
+            <ul>
+                <li>Profilers sample the call stack trace periodically.</li>
+                <li>Cheap, fast unintrusive.</li>
+                <li>No extra state is kept in memory.</li>
+                <li>Interested on how long it takes for method calls.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>Javaflame</h1>
+        </div>
+        <div class="body">
+            <ul>
+                <li>Javaflame instruments every call matching the filter.</li>
+                <li>Expensive, slow and intrusive.</li>
+                <li>Keeps a separate stack in memory.</li>
+                <li>Calls toString on parameters.</li>
+                <li>Writes to a file periodically.</li>
+                <li>Interested in what calls what and the values.</li>
+                <li>Also allows code interception.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide grid layout-title-content">
+        <div class="header">
+            <h1>Get it here!</h1>
+        </div>
+        <div class="body">
+            <a href="https://github.com/beothorn/javaflame">https://github.com/beothorn/javaflame</a>
+        </div>
+    </div>
+
+<script>
+
+const getUrlVars = () => {
+    let vars = {}
+    window.location.hash.replace(/[#&]+([^=&]+)=([^&]*)/gi, (m,key,value) => vars[key] = value)
+    return vars 
+}
+
+const setUrlVar = (key, value) => {
+    const oldHref = window.location.hash
+    let merkerIndex = oldHref.indexOf('#')
+    let pageUrl = oldHref.substring(0, merkerIndex)
+    if(merkerIndex === -1) pageUrl = oldHref
+    let vars = getUrlVars()
+    if(vars[key] && vars[key] === value) return
+    vars[key] = value
+    let params = ""
+    for (const [key, value] of Object.entries(vars)) {
+        if(!params)
+            params += `${key}=${value}`
+        else
+            params += `&${key}=${value}`
+    }
+    window.location.hash = params
+}
+
+let slides = Array.from(document.querySelectorAll(".slide"))
+let currentSlide = 0
+let lastSlide = slides.length - 1 
+const showSlide = (slideIndex) => {
+    slides.forEach(s => s.style.display = "none")
+    slides[slideIndex].style.display = null
+}
+const setSlide = (slideIndex) => {
+    currentSlide = parseInt(slideIndex)
+    currentSlide = currentSlide < 0 ? 0 : currentSlide
+    currentSlide = currentSlide > lastSlide ? lastSlide : currentSlide
+    setUrlVar("slide", currentSlide)
+    showSlide(currentSlide)
+}
+const nextSlide = () => setSlide(currentSlide + 1)
+const previousSlide = () => setSlide(currentSlide - 1)
+
+if(getUrlVars()["slide"])
+    setSlide(getUrlVars()["slide"])
+else
+    setSlide("0")
+
+document.onkeydown = (e) => {
+    const left = 37
+    const right = 39
+    const backspace = 8
+    const space = 32
+    switch(e.keyCode){
+        case left:
+        case backspace:
+            previousSlide()
+            break
+        case right:
+        case space:
+            nextSlide()
+            break
+    }
+}
+
+</script>
+</body>
+</html> 
