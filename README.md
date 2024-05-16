@@ -24,9 +24,9 @@ A java agent is a regular java progam called at the jvm initialization (also aft
 The transformer is called when classes are loaded, when they are redefined. and if canRetransform is true, when they are retransformed.
 Called berfore Main.
 
-## Show java agent that changes a sum
+## Show java agent that changes something
 
-...
+Simple bytebuddy agent that changes date or some value  
 
 ## Explain what profilers do
 
